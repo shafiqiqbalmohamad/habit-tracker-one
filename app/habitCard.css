@@ -1,0 +1,55 @@
+/* app/habitCard.css */
+
+/* Habit Card Layout */
+.habit-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin: 10px 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Habit Name */
+.habit-card .habit-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Habit Actions */
+.habit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.habit-actions button {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.habit-actions button:hover {
+  background-color: #0056b3;
+}
+
+.habit-actions .completed {
+  background-color: #28a745;
+}
+
+.habit-actions .delete {
+  background-color: #dc3545;
+}
+
+.habit-actions button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}

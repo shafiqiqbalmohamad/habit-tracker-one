@@ -1,0 +1,58 @@
+/* app/dashboard.css */
+
+/* General Layout for Dashboard */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Habits List */
+.habits-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress Section */
+.progress-section {
+  margin-top: 20px;
+  width: 80%;
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  background-color: #4caf50;
+  transition: width 0.3s ease;
+}
+
+.progress-label {
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 10px;
+}
