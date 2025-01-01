@@ -1,53 +1,51 @@
-import React, { useState } from "react";
-import AddHabitForm from "../components/AddHabitForm";
-import HabitCard from "../components/HabitCard";
-import ProgressBar from "../components/ProgressBar";
+"use client";
 
-const Dashboard: React.FC = () => {
-  const [habits, setHabits] = useState<string[]>([]);
+import { useHabits } from "@/hooks/useHabits";
+import AddHabitForm from "@/components/AddHabitForm";
 
-  const addHabit = (habit: string) => {
-    setHabits((prevHabits) => [...prevHabits, habit]);
-  };
+export default function Dashboard() {
+  const { habits, loading, addHabit, deleteHabit } = useHabits();
 
-  const handleDeleteHabit = (index: number) => {
-    setHabits((prevHabits) => prevHabits.filter((_, i) => i !== index));
-  };
-
-  const progressPercentage = Math.round((habits.length / 10) * 100);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Habit Tracker Dashboard</h1>
-
-      {/* Progress Bar */}
-      <div style={{ marginBottom: "20px" }}>
-        <h2>Your Progress</h2>
-        <ProgressBar progress={progressPercentage} />
-      </div>
-
-      {/* Habit List */}
-      <div style={{ marginTop: "30px" }}>
-        <h2>Your Habits</h2>
-        <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {habits.length > 0 ? (
-            habits.map((habit, index) => (
-              <HabitCard
-                key={index}
-                habit={habit}
-                onDelete={() => handleDeleteHabit(index)}
-              />
-            ))
-          ) : (
-            <p>No habits added yet. Start tracking your habits!</p>
-          )}
-        </div>
-      </div>
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Habit Tracker Dashboard</h1>
 
       {/* Add Habit Form */}
-      <AddHabitForm onAddHabit={addHabit} />
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4">Add New Habit</h2>
+        <AddHabitForm onAddHabit={addHabit} />
+      </div>
+
+      {/* Habits List */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold mb-4">Your Habits</h2>
+        {habits.length === 0 ? (
+          <p className="text-gray-500">
+            No habits added yet. Start tracking your habits!
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {habits.map((habit) => (
+              <div
+                key={habit.id}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+              >
+                <span className="text-gray-800">{habit.name}</span>
+                <button
+                  onClick={() => deleteHabit(habit.id)}
+                  className="text-red-600 hover:text-red-800 px-3 py-1 rounded-md hover:bg-red-50"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
-};
-
-export default Dashboard;
+}

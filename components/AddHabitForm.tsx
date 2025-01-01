@@ -18,7 +18,6 @@ export default function AddHabitForm({ onAddHabit }: AddHabitFormProps) {
       setLoading(true);
       await onAddHabit(name.trim());
       setName(""); // Clear form after success
-      console.log("Habit added successfully"); // Debug log
     } catch (error) {
       console.error("Failed to add habit:", error);
       alert("Failed to add habit. Please try again.");
@@ -35,14 +34,14 @@ export default function AddHabitForm({ onAddHabit }: AddHabitFormProps) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter new habit..."
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={loading}
         />
       </div>
       <button
         type="submit"
         disabled={loading || !name.trim()}
-        className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+        className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Adding..." : "Add Habit"}
       </button>
