@@ -3,27 +3,33 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
-
-interface Habit {
-  id: number;
-  name: string;
-  user_id: string;
-  created_at: string;
-}
-
-interface HabitTracking {
-  id: number;
-  habit_id: number;
-  date: string;
-  completed: boolean;
-  user_id: string;
-}
+import type { Habit, HabitTracking } from "@/types";
 
 export function useHabits() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [trackingData, setTrackingData] = useState<HabitTracking[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+
+  const fetchTrackingData = async (habitIds: number[]) => {
+    if (!habitIds.length || !user) return;
+
+    try {
+      const { data: tracking, error } = await supabase
+        .from("habit_tracking")
+        .select("*")
+        .in("habit_id", habitIds)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      if (tracking) {
+        setTrackingData(tracking);
+      }
+    } catch (error) {
+      console.error("Error fetching tracking data:", error);
+    }
+  };
 
   const fetchHabits = async () => {
     if (!user) return;
@@ -48,26 +54,6 @@ export function useHabits() {
     }
   };
 
-  const fetchTrackingData = async (habitIds: number[]) => {
-    if (!user || !habitIds.length) return;
-
-    try {
-      const { data: tracking, error } = await supabase
-        .from("habit_tracking")
-        .select("*")
-        .in("habit_id", habitIds)
-        .eq("user_id", user.id);
-
-      if (error) throw error;
-
-      if (tracking) {
-        setTrackingData(tracking);
-      }
-    } catch (error) {
-      console.error("Error fetching tracking data:", error);
-    }
-  };
-
   useEffect(() => {
     if (user) {
       fetchHabits();
@@ -80,7 +66,12 @@ export function useHabits() {
     try {
       const { data, error } = await supabase
         .from("habits")
-        .insert([{ name, user_id: user.id }])
+        .insert([
+          {
+            name,
+            user_id: user.id,
+          },
+        ])
         .select()
         .single();
 
@@ -99,13 +90,23 @@ export function useHabits() {
     if (!user) return;
 
     try {
-      const { error } = await supabase
+      // First delete tracking data
+      const { error: trackingError } = await supabase
+        .from("habit_tracking")
+        .delete()
+        .eq("habit_id", id)
+        .eq("user_id", user.id);
+
+      if (trackingError) throw trackingError;
+
+      // Then delete the habit
+      const { error: habitError } = await supabase
         .from("habits")
         .delete()
         .eq("id", id)
         .eq("user_id", user.id);
 
-      if (error) throw error;
+      if (habitError) throw habitError;
 
       setHabits((prevHabits) => prevHabits.filter((habit) => habit.id !== id));
       setTrackingData((prevTracking) =>

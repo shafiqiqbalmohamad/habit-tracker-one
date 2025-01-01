@@ -2,23 +2,49 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Habit } from "@/types/habit"; // Updated import path with @/ alias
+import type { Habit, HabitTracking } from "@/types";
 
-// Custom hook to calculate the progress of habits
-export const useProgress = (habits: Habit[]) => {
-  const [progress, setProgress] = useState<number>(0);
+interface ProgressStats {
+  total: number;
+  completed: number;
+  percentage: number;
+}
 
-  // Calculate the progress based on completed habits
+export function useProgress(
+  habits: Habit[],
+  trackingData: HabitTracking[],
+  selectedDate: string
+) {
+  const [stats, setStats] = useState<ProgressStats>({
+    total: 0,
+    completed: 0,
+    percentage: 0,
+  });
+
   useEffect(() => {
-    const totalHabits = habits.length;
-    const completedHabits = habits.filter((habit) => habit.completed).length;
-
-    if (totalHabits > 0) {
-      setProgress((completedHabits / totalHabits) * 100);
-    } else {
-      setProgress(0);
+    if (!habits.length) {
+      setStats({ total: 0, completed: 0, percentage: 0 });
+      return;
     }
-  }, [habits]);
 
-  return progress;
-};
+    const total = habits.length;
+    const completed = habits.filter((habit) => {
+      return trackingData.some(
+        (tracking) =>
+          tracking.habit_id === habit.id &&
+          tracking.date === selectedDate &&
+          tracking.completed
+      );
+    }).length;
+
+    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    setStats({
+      total,
+      completed,
+      percentage,
+    });
+  }, [habits, trackingData, selectedDate]);
+
+  return stats;
+}
