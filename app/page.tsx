@@ -1,12 +1,12 @@
-import { Suspense } from 'react';
-import HabitDashboard from '@/components/HabitDashboard';
+"use client";
 
-export default function Page() {
+import ProtectedRoute from "@/components/ProtectedRoute";
+import HabitDashboard from "@/components/HabitDashboard";
+
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gray-100 p-4">
-      <Suspense fallback={<div>Loading...</div>}>
-        <HabitDashboard />
-      </Suspense>
-    </main>
+    <ProtectedRoute>
+      <HabitDashboard />
+    </ProtectedRoute>
   );
 }

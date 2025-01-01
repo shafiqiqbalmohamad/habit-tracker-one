@@ -1,39 +1,51 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import { useState } from "react";
 
 interface AddHabitFormProps {
-  onAddHabit: (habit: string) => void;
+  onAddHabit: (name: string) => Promise<void>;
 }
 
-const AddHabitForm: React.FC<AddHabitFormProps> = ({ onAddHabit }) => {
-  const [habitInput, setHabitInput] = useState('');
+export default function AddHabitForm({ onAddHabit }: AddHabitFormProps) {
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (habitInput.trim()) {
-      onAddHabit(habitInput.trim());
-      setHabitInput('');
+    if (!name.trim()) return;
+
+    try {
+      setLoading(true);
+      await onAddHabit(name.trim());
+      setName(""); // Clear form after success
+      console.log("Habit added successfully"); // Debug log
+    } catch (error) {
+      console.error("Failed to add habit:", error);
+      alert("Failed to add habit. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="flex gap-2">
-        <Input
+      <div>
+        <input
           type="text"
-          value={habitInput}
-          onChange={(e) => setHabitInput(e.target.value)}
-          placeholder="Enter a new habit"
-          className="flex-1"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter new habit..."
+          className="w-full px-3 py-2 border rounded-md"
+          disabled={loading}
         />
-        <Button type="submit">Add Habit</Button>
       </div>
+      <button
+        type="submit"
+        disabled={loading || !name.trim()}
+        className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+      >
+        {loading ? "Adding..." : "Add Habit"}
+      </button>
     </form>
   );
-};
-
-export default AddHabitForm;
+}

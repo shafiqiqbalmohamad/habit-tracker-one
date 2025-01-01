@@ -1,34 +1,48 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useHabits } from '@/hooks/useHabits';
-import HabitCard from '@/components/HabitCard';
-import AddHabitForm from '@/components/AddHabitForm';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useHabits } from "@/hooks/useHabits";
+import AddHabitForm from "./AddHabitForm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function HabitDashboard() {
-  const { habits, addHabit, deleteHabit } = useHabits();
+  const { habits, loading, addHabit } = useHabits();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Habit Tracker</CardTitle>
+          <CardTitle>Add New Habit</CardTitle>
         </CardHeader>
         <CardContent>
           <AddHabitForm onAddHabit={addHabit} />
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {habits.map((habit, index) => (
-          <HabitCard 
-            key={index} 
-            habit={habit} 
-            onDelete={() => deleteHabit(index)} 
-          />
-        ))}
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Habits</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {habits.length === 0 ? (
+            <p className="text-gray-500">No habits added yet.</p>
+          ) : (
+            <ul className="space-y-2">
+              {habits.map((habit) => (
+                <li
+                  key={habit.id}
+                  className="flex items-center justify-between"
+                >
+                  <span>{habit.name}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
